@@ -112,43 +112,10 @@ function isIsoscelesTriangle(a, b, c) {
  *  26  => XXVI
  */
 function convertToRomanNumerals(num) {
-  let res = '';
-  const whole = Math.floor(num / 10);
-  for (let i = 0; i <= whole; i + 1) {
-    res += 'X';
-  }
-  switch (num % 10) {
-    case 1:
-      res += 'I';
-      break;
-    case 2:
-      res += 'II';
-      break;
-    case 3:
-      res += 'III';
-      break;
-    case 4:
-      res += 'IV';
-      break;
-    case 5:
-      res += 'V';
-      break;
-    case 6:
-      res += 'VI';
-      break;
-    case 7:
-      res += 'VII';
-      break;
-    case 8:
-      res += 'VIII';
-      break;
-    case 9:
-      res += 'IX';
-      break;
-    default:
-      res += '';
-  }
-  return res;
+  return (
+    ['', 'X', 'XX', 'XXX'][Math.trunc(num / 10)] +
+    ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'][num % 10]
+  );
 }
 
 /**
@@ -167,47 +134,35 @@ function convertToRomanNumerals(num) {
  *  '1950.2'  => 'one nine five zero point two'
  */
 function convertNumberToString(numberStr) {
-  let res = '';
+  const arrOfNumbers = [
+    'zero',
+    'one',
+    'two',
+    'three',
+    'four',
+    'five',
+    'six',
+    'seven',
+    'eight',
+    'nine',
+  ];
+  let result = '';
   for (let i = 0; i < numberStr.length; i += 1) {
-    switch (numberStr[i]) {
-      case 1:
-        res += 'one';
-        break;
-      case 2:
-        res += 'two';
-        break;
-      case 3:
-        res += 'three';
-        break;
-      case 4:
-        res += 'four';
-        break;
-      case 5:
-        res += 'five';
-        break;
-      case 6:
-        res += 'six';
-        break;
-      case 7:
-        res += 'seven';
-        break;
-      case 8:
-        res += 'eight';
-        break;
-      case 9:
-        res += 'nine';
-        break;
+    if (i < numberStr.length && i > 0) result = `${result} `;
+    const char = numberStr[i];
+    switch (char) {
       case '-':
-        res += 'minus';
+        result = `${result}minus`;
+        break;
+      case '.':
+      case ',':
+        result = `${result}point`;
         break;
       default:
-        res += 'point';
-    }
-    if (i !== numberStr.length - 1) {
-      res += '';
+        result = `${result}${arrOfNumbers[Number(char)]}`;
     }
   }
-  return res;
+  return result;
 }
 
 /**
@@ -485,33 +440,37 @@ function shuffleChar(str, iterations) {
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
+
 function getNearestBigger(number) {
-  const numArr = Array.from(`${number}`, (el) => Number(el));
+  const str = String(number);
+  const arr = [];
+  let arr1 = [];
+  const arr2 = [];
+  for (let i = 0; i < str.length; i += 1) {
+    arr.push(str[i]);
+  }
   let index;
-  let el;
-  for (let i = numArr.length - 1; i > 0; i -= 1) {
-    if (numArr[i] > numArr[i - 1]) {
-      index = i - 1;
-      el = numArr[index];
+  for (let i = arr.length - 2; i >= 0; i -= 1) {
+    if (arr[i] < arr[i + 1]) {
+      index = i;
       break;
     }
   }
-  const leftArr = numArr.splice(0, index);
-  const rightPart = numArr.sort((a, b) => a - b);
-  let nextEl;
-  let indexNextEl;
-  for (let i = 0; i < rightPart.length; i += 1) {
-    if (rightPart[i] === el) {
-      nextEl = rightPart[i + 1];
-      indexNextEl = i + 1;
-    }
+  for (let i = 0; i < arr.length; i += 1) {
+    if (i < index) arr1.push(arr[i]);
+    else arr2.push(arr[i]);
   }
-  const rightArr = [
-    ...rightPart.splice(0, indexNextEl),
-    ...rightPart.splice(1),
-  ];
-  const resNumber = +[...leftArr, nextEl, ...rightArr].join('');
-  return resNumber;
+  arr2.sort((a, b) => a - b);
+  const arr3 = [];
+  let flag = true;
+  for (let i = 0; i < arr2.length; i += 1) {
+    if (arr2[i] > arr[index] && flag) {
+      arr1.push(arr2[i]);
+      flag = false;
+    } else arr3.push(arr2[i]);
+  }
+  arr1 = [...arr1, ...arr3];
+  return Number(arr1.join(''));
 }
 
 module.exports = {
